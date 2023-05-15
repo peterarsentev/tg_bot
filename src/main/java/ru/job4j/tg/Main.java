@@ -5,7 +5,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -16,15 +15,13 @@ public class Main {
         try (var app = Main.class.getClassLoader().getResourceAsStream("app.properties")) {
             config.load(app);
         }
+        var sessionTg = new SessionTg();
+        var i18n = new I18n();
+        i18n.loadDic("ru");
+        i18n.loadDic("en");
         var actions = Map.of(
-                "/start", new InfoAction(
-                        List.of(
-                        "/start - Команды бота",
-                        "/echo - Ввод данных для команды",
-                                "/new - Регистрация пользователя")
-                ),
-                  "/echo", new EchoAction("/echo"),
-                "/new", new RegAction()
+                "/start", new InfoAction(sessionTg, i18n),
+                "/lang", new LangAction(sessionTg, i18n)
         );
         tg.registerBot(new BotMenu(actions, config.getProperty("tg.username"), config.getProperty("tg.token")));
     }
