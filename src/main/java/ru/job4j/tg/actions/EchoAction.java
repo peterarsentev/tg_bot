@@ -1,8 +1,13 @@
-package ru.job4j.tg;
+package ru.job4j.tg.actions;
 
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.job4j.tg.Action;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 public class EchoAction implements Action {
     private final String action;
@@ -12,20 +17,10 @@ public class EchoAction implements Action {
     }
 
     @Override
-    public BotApiMethod handle(Update update) {
+    public Optional<BotApiMethod> handle(Update update) {
         var msg = update.getMessage();
         var chatId = msg.getChatId().toString();
         var text = "Введите любой текст";
-        return new SendMessage(chatId, text);
+        return Optional.of(new SendMessage(chatId, text));
     }
-
-    @Override
-    public BotApiMethod callback(Update update) {
-        var msg = update.getMessage();
-        var chatId = msg.getChatId().toString();
-        var text = "Action: " + action + ", data: " + msg.getText();
-        return new SendMessage(chatId, text);
-    }
-
-
 }

@@ -3,8 +3,10 @@ package ru.job4j.tg;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+import ru.job4j.tg.actions.*;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -20,8 +22,11 @@ public class Main {
         i18n.loadDic("ru");
         i18n.loadDic("en");
         var actions = Map.of(
-                "/start", new InfoAction(sessionTg, i18n),
-                "/lang", new LangAction(sessionTg, i18n)
+                "/start", List.of(new InfoAction(sessionTg, i18n), new ShowBindInputAction("info")),
+                "/echo", List.<Action>of(new EchoAction("echo")),
+                "/reg", List.of(new NameAskAction(sessionTg), new NameStoreAction(sessionTg),
+                        new EmailAskAction(sessionTg), new EmailStoreAction(sessionTg),
+                        new RegCreateAction(sessionTg))
         );
         tg.registerBot(new BotMenu(actions, config.getProperty("tg.username"), config.getProperty("tg.token")));
     }

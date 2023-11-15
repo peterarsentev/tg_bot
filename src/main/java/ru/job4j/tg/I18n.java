@@ -15,7 +15,7 @@ public class I18n {
             prop.load(langPr);
         }
         var map = new HashMap<String, String>();
-        for (Object name : prop.keySet()) {
+        for (var name : prop.keySet()) {
             map.put(name.toString(), prop.getProperty(name.toString()));
         }
         dic.put(lang, map);

@@ -1,8 +1,13 @@
-package ru.job4j.tg;
+package ru.job4j.tg.actions;
 
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.job4j.tg.Action;
+import ru.job4j.tg.I18n;
+import ru.job4j.tg.SessionTg;
+
+import java.util.Optional;
 
 public class LangAction implements Action {
     private final SessionTg sessionTg;
@@ -14,23 +19,11 @@ public class LangAction implements Action {
     }
 
     @Override
-    public BotApiMethod handle(Update update) {
+    public Optional<BotApiMethod> handle(Update update) {
         var msg = update.getMessage();
         var chatId = msg.getChatId().toString();
         var lang = sessionTg.get(chatId, "lang","en");
         var text = i18n.get(lang, "lang.choose");
-        return new SendMessage(chatId, text);
+        return Optional.of(new SendMessage(chatId, text));
     }
-
-    @Override
-    public BotApiMethod callback(Update update) {
-        var msg = update.getMessage();
-        var chatId = msg.getChatId().toString();
-        sessionTg.put(chatId, "lang", msg.getText());
-        var lang = sessionTg.get(chatId, "lang", "en");
-        var text = i18n.get(lang, "lang.current");
-        return new SendMessage(chatId, text);
-    }
-
-
 }
