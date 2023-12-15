@@ -5,15 +5,13 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.job4j.tg.actions.RegCreateAction;
+import ru.job4j.tg.domain.Resp;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BotMenu extends TelegramLongPollingBot {
-    private final Map<String, Iterator<Action>> bindingBy = new ConcurrentHashMap<>();
+    private final Map<String, ListIterator<Action>> bindingBy = new ConcurrentHashMap<>();
     private final Map<String, List<Action>> actions;
     private final String username;
     private final String token;
@@ -39,7 +37,7 @@ public class BotMenu extends TelegramLongPollingBot {
         var key = update.getMessage().getText();
         var chatId = update.getMessage().getChatId().toString();
         if (actions.containsKey(key)) {
-            bindingBy.put(chatId, actions.get(key).iterator());
+            bindingBy.put(chatId, actions.get(key).listIterator());
         }
         if (!bindingBy.containsKey(chatId)) {
             return;
@@ -49,11 +47,14 @@ public class BotMenu extends TelegramLongPollingBot {
             bindingBy.remove(chatId);
             return;
         }
-        Optional<BotApiMethod> result;
+        Resp resp;
         do {
-            result = bindingActions.next().handle(update);
-        } while (result.isEmpty());
-        send(result.get());
+            resp = bindingActions.next().handle(update);
+            if (resp.repeat()) {
+                bindingActions.previous();
+            }
+        } while (!resp.hasMessage());
+        send(resp.message());
     }
 
     private void send(BotApiMethod msg) {

@@ -8,7 +8,7 @@ import ru.job4j.tg.I18n;
 import ru.job4j.tg.SessionTg;
 
 import java.util.Optional;
-
+import ru.job4j.tg.domain.Resp;
 public class LangAction implements Action {
     private final SessionTg sessionTg;
     private final I18n i18n;
@@ -19,11 +19,11 @@ public class LangAction implements Action {
     }
 
     @Override
-    public Optional<BotApiMethod> handle(Update update) {
+    public Resp handle(Update update) {
         var msg = update.getMessage();
         var chatId = msg.getChatId().toString();
         var lang = sessionTg.get(chatId, "lang","en");
         var text = i18n.get(lang, "lang.choose");
-        return Optional.of(new SendMessage(chatId, text));
+        return new Resp(false, new SendMessage(chatId, text));
     }
 }

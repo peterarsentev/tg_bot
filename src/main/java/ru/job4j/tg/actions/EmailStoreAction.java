@@ -7,7 +7,7 @@ import ru.job4j.tg.Action;
 import ru.job4j.tg.SessionTg;
 
 import java.util.Optional;
-
+import ru.job4j.tg.domain.Resp;
 public class EmailStoreAction implements Action {
     private final SessionTg sessionTg;
 
@@ -16,11 +16,11 @@ public class EmailStoreAction implements Action {
     }
 
     @Override
-    public Optional<BotApiMethod> handle(Update update) {
+    public Resp handle(Update update) {
         var msg = update.getMessage();
         var chatId = msg.getChatId().toString();
         var email = msg.getText();
         sessionTg.put(chatId, "email", email);
-        return Optional.empty();
+        return new Resp(false, null);
     }
 }

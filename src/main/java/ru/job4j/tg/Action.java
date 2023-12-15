@@ -1,13 +1,13 @@
 package ru.job4j.tg;
 
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.job4j.tg.domain.Resp;
+
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Optional;
 
 public interface Action {
-    Optional<BotApiMethod> handle(Update update);
+    Resp handle(Update update);
 
     default Iterator<? extends Action> bindingActions() {
        return new ArrayList<Action>().iterator();

@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.job4j.tg.Action;
 
 import java.util.Optional;
-
+import ru.job4j.tg.domain.Resp;
 public class ShowBindInputAction implements Action {
     private final String action;
 
@@ -15,10 +15,10 @@ public class ShowBindInputAction implements Action {
     }
 
     @Override
-    public Optional<BotApiMethod> handle(Update update) {
+    public Resp handle(Update update) {
         var msg = update.getMessage();
         var chatId = msg.getChatId().toString();
         var text = "Введите любой текст";
-        return Optional.of(new SendMessage(chatId, text));
+        return new Resp(false, new SendMessage(chatId, text));
     }
 }
